@@ -1,7 +1,8 @@
 <input id="query" type="text" [(ngModel)]="query">
+<button (click)="postQuery()">ammu se taivaalle</button>
 <button *ngIf="!isRecording" (click)="startRecognition()">start</button>
 <button *ngIf="isRecording" (click)="stopRecognition()">stop</button>
-<button (click)="postQuery()">ammu se taivaalle</button>
 
-
-<button (click)="sendTestOrder()">Lähetä testitilaus!</button>
+<button (click)="sendOrder()">Lähetä tilaus: {{query}}</button>
+<br>
+{{orderStatusMessage}}

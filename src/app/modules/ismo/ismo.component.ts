@@ -1,9 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit, ApplicationRef} from '@angular/core';
 import { Response, Http, Headers } from '@angular/http';
 import { IWindow } from './IWindow';
 import { OrderService } from "../../shared/services/order.service";
 import { Order } from "../../shared/services/models/order";
 import { Config } from "../../config/config";
+import { Observable } from "rxjs";
+import 'rxjs/operator/map';
+import { setTimeout } from "timers";
+import { Drink } from "./drink";
 
 const {webkitSpeechRecognition} : IWindow = <IWindow>window;
 
@@ -16,10 +20,15 @@ export class IsmoComponent implements OnInit {
 
   public query: string;
   public isRecording: boolean;
+  public orderStatusMessage: string;
 
   private recognition: any;
+  private drinks: Drink[] = [
+    new Drink("beer", new Order(1, [1,2,3,4,5,6])),
+    new Drink("wine", new Order(1, [6,5,4,3,2,1]))
+  ];
 
-  constructor(private http: Http, private orderService: OrderService) { }
+  constructor(private http: Http, private orderService: OrderService, private appRef: ApplicationRef) { }
 
   ngOnInit() {
     this.recognition = new webkitSpeechRecognition();
@@ -32,13 +41,16 @@ export class IsmoComponent implements OnInit {
 
     let body = JSON.stringify({ query: this.query, lang: "en", sessionId: "somerandomthing"});
 
-    this.http.post("https://api.api.ai/v1/query?v=20150910", body, {
+    let response = this.http.post("https://api.api.ai/v1/query?v=20150910", body, {
       headers: header
-    })
-    .subscribe(
-      data => console.log(data.text()),
+    });
+
+    response.subscribe(
+      data => {
+        this.handleOrderResult(data.json().result);
+      },
       err => console.log(err.text()),
-      () => console.log("valmis")
+      () => console.log("ready")
     );
   }
 
@@ -55,8 +67,11 @@ export class IsmoComponent implements OnInit {
       for (var i = event.resultIndex; i < event.results.length; ++i) {
         text += event.results[i][0].transcript;
       }
-      console.log("setting text: " + text);
+
       this.query = text;
+      this.appRef.tick();
+
+      this.postQuery();
     };
 
     this.recognition.lang = "en-US";
@@ -70,10 +85,29 @@ export class IsmoComponent implements OnInit {
     this.isRecording = false;
   }
 
-  public sendTestOrder(): void {
-    var testOrder = new Order();
-    testOrder.state = 123;
-    testOrder.recipe = [ 0, 0, 1, 0, 0, 3 ];
-    this.orderService.sendOrder(testOrder);
+  private handleOrderResult(apiIoResult: any) : void {
+    this.orderStatusMessage = apiIoResult.fulfillment.speech;
+
+    if (apiIoResult.action !== "order" || apiIoResult.actionIncomplete === true) {
+      return;
+    }
+
+    let order = this.getOrder(apiIoResult.parameters.drink);
+
+    if (order !== null) {
+      this.orderService.sendOrder(order);
+    } else {
+      this.orderStatusMessage = apiIoResult.parameters.drink + " was not found in our recipe database.";
+    }
+  }
+
+  private getOrder(drinkName: string) : Order {
+    for (let drink of this.drinks) {
+      if (drink.name == drinkName) {
+        return drink.order;
+      }
+    }
+
+    return null;
   }
 }
