@@ -1,0 +1,32 @@
+#ismo-face {
+    background: url('/assets/ai_naama_1.png') no-repeat center;
+    background-size: contain;
+    min-height: 600px;
+}
+
+#ismo-face-squinting {
+    background: url('/assets/ai_naama_2.png') no-repeat center;
+    background-size: contain;
+    min-height: 600px;
+}
+
+.bottom-margin {
+    margin-bottom: 40px;
+}
+
+.white-background {
+    background: #FFFFFF;
+}
+
+#ismo-mouth {
+    border-radius: 15px;
+    /*border: 5px solid red;*/
+}
+
+.huge-font {
+    font-size: 40px;
+}
+
+.break-words {
+    word-wrap: break-word;
+}
