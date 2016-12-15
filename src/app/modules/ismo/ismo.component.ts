@@ -22,20 +22,34 @@ export class IsmoComponent implements OnInit {
   public isRecording: boolean;
   public orderStatusMessage: string;
   public isThinking: boolean = false;
+  public latestOrder: Order = new Order(0, [0, 0, 0, 0]);
 
   private recognition: any;
   private drinks: Drink[] = [
-    new Drink("beer", new Order(0, [10, 0, 0, 0])),
-    new Drink("wine", new Order(0, [0, 10, 0, 0])),
-    new Drink("jaffa", new Order(0, [0, 0, 10, 0])),
-    new Drink("coke", new Order(0, [0, 0, 0, 10])),
-    new Drink("jaffacoke", new Order(0, [0, 0, 10, 10]))
+    new Drink("beer", new Order(0, [5, 0, 5, 10])),
+    new Drink("milk", new Order(0, [0, 5, 0, 0])),
+    new Drink("jallu", new Order(0, [0, 0, 5, 0])),
+    new Drink("sake", new Order(0, [0, 0, 0, 5])),
+    new Drink("jallumaito", new Order(0, [0, 10, 2, 2])),
+    new Drink("sake bomb", new Order(0, [10, 0, 0, 2])),
+    new Drink("kaljamaito", new Order(0, [10, 10, 0, 0]))
   ];
 
   constructor(private http: Http, private orderService: OrderService, private appRef: ApplicationRef) { }
 
   ngOnInit() {
     this.recognition = new webkitSpeechRecognition();
+  }
+
+  public getStatusText(status: number) : string {
+    switch (status) {
+      case 0:
+        return "";
+      case 1:
+        return "Here we go! Coming right up..";
+      case 2:
+        return ":) :) :) :)";
+    }
   }
 
   private postQuery(): void {
@@ -56,7 +70,7 @@ export class IsmoComponent implements OnInit {
         this.appRef.tick();
       },
       err => {
-        console.log(err.text())
+        console.log(err.text());
         this.isThinking = false;
         this.appRef.tick();
       },
@@ -68,6 +82,8 @@ export class IsmoComponent implements OnInit {
     this.recognition.continuous = false;
     this.recognition.interimResults = false;
     this.isThinking = true;
+    this.isRecording = true;
+    this.appRef.tick();
 
     this.recognition.onstart = function(event) {
       console.log("recording");
@@ -75,7 +91,7 @@ export class IsmoComponent implements OnInit {
 
     this.recognition.onend = (event) => {
       console.log("onend");
-    }
+    };
 
     this.recognition.onresult = (event) => {
       console.log("onresult");
@@ -83,6 +99,8 @@ export class IsmoComponent implements OnInit {
       for (var i = event.resultIndex; i < event.results.length; ++i) {
         text += event.results[i][0].transcript;
       }
+
+      console.log(text);
 
       this.query = text;
       this.appRef.tick();
@@ -93,11 +111,10 @@ export class IsmoComponent implements OnInit {
     this.recognition.onspeechend = (event) => {
       console.log("speechend");
       this.stopRecognition();
-    }
+    };
 
     this.recognition.lang = "en-US";
     this.recognition.start();
-    this.isRecording = true;
   }
 
   private stopRecognition(): void {
@@ -118,7 +135,12 @@ export class IsmoComponent implements OnInit {
     let order = this.getOrder(apiIoResult.parameters.drink);
 
     if (order !== null) {
-      this.orderService.sendOrder(order);
+      this.orderStatusMessage = this.orderStatusMessage + " One " + apiIoResult.parameters.drink + " coming right up!";
+      this.orderService.sendOrder(order).subscribe((order) => {
+        this.latestOrder = order;
+        this.appRef.tick();
+      });
+
       setTimeout(() => {
         this.orderStatusMessage = "";
         this.appRef.tick();

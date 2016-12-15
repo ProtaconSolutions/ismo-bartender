@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AngularFire } from 'angularfire2';
+import {AngularFire, FirebaseObjectObservable} from 'angularfire2';
 import { Order } from './models/order';
 
 @Injectable()
@@ -8,9 +8,12 @@ export class OrderService {
   constructor(private angularFire: AngularFire) {
   }
 
-  sendOrder(order: Order) {
-    let orders = this.angularFire.database.list('orders');
+  sendOrder(order: Order): FirebaseObjectObservable<Order> {
+    //noinspection TypeScriptUnresolvedVariable
+    let key = this.angularFire.database.list('orders').push(order).key;
 
-    orders.push(order);
+    order.key = key;
+
+    return this.angularFire.database.object(`orders/${order.key}`);
   }
 }

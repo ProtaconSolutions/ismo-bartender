@@ -1,4 +1,5 @@
 export class Order {
+  key?: string;
   state: number;
   recipe: number[];
 
