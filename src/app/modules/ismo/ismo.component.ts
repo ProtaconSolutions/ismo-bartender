@@ -70,7 +70,12 @@ export class IsmoComponent implements OnInit {
       console.log("recording");
     };
 
+    this.recognition.onend = (event) => {
+      console.log("onend");
+    }
+
     this.recognition.onresult = (event) => {
+      console.log("onresult");
       var text = "";
       for (var i = event.resultIndex; i < event.results.length; ++i) {
         text += event.results[i][0].transcript;
@@ -81,6 +86,11 @@ export class IsmoComponent implements OnInit {
 
       this.postQuery();
     };
+
+    this.recognition.onspeechend = (event) => {
+      console.log("speechend");
+      this.stopRecognition();
+    }
 
     this.recognition.lang = "en-US";
     this.recognition.start();
