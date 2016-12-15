@@ -26,11 +26,11 @@ export class IsmoComponent implements OnInit {
 
   private recognition: any;
   private drinks: Drink[] = [
-    new Drink("beer", new Order(0, [5, 0, 5, 10])),
+    new Drink("beer", new Order(0, [5, 0, 0, 0])),
     new Drink("milk", new Order(0, [0, 5, 0, 0])),
     new Drink("jallu", new Order(0, [0, 0, 5, 0])),
     new Drink("sake", new Order(0, [0, 0, 0, 5])),
-    new Drink("jallumaito", new Order(0, [0, 10, 2, 2])),
+    new Drink("jallumaito", new Order(0, [0, 10, 2, 0])),
     new Drink("sake bomb", new Order(0, [10, 0, 0, 2])),
     new Drink("kaljamaito", new Order(0, [10, 10, 0, 0]))
   ];
@@ -113,7 +113,7 @@ export class IsmoComponent implements OnInit {
       this.stopRecognition();
     };
 
-    this.recognition.lang = "en-US";
+    this.recognition.lang = "fi-FI";
     this.recognition.start();
   }
 
