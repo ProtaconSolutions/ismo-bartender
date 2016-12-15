@@ -21,6 +21,7 @@ export class IsmoComponent implements OnInit {
   public query: string;
   public isRecording: boolean;
   public orderStatusMessage: string;
+  public isThinking: boolean = false;
 
   private recognition: any;
   private drinks: Drink[] = [
@@ -35,6 +36,8 @@ export class IsmoComponent implements OnInit {
   }
 
   private postQuery(): void {
+    this.isThinking = true;
+
     let header = new Headers();
     header.append("Content-Type", "application/json; charset=utf-8");
     header.append("Authorization", "Bearer " + Config.APIAI_CONFIG.clientAccessToken);
@@ -47,9 +50,13 @@ export class IsmoComponent implements OnInit {
 
     response.subscribe(
       data => {
+        this.isThinking = false;
         this.handleOrderResult(data.json().result);
       },
-      err => console.log(err.text()),
+      err => {
+        this.isThinking = false;
+        console.log(err.text())
+      },
       () => console.log("ready")
     );
   }
@@ -87,8 +94,10 @@ export class IsmoComponent implements OnInit {
 
   private handleOrderResult(apiIoResult: any) : void {
     this.orderStatusMessage = apiIoResult.fulfillment.speech;
+    console.log(apiIoResult.fulfillment.speech);
 
     if (apiIoResult.action !== "order" || apiIoResult.actionIncomplete === true) {
+      this.appRef.tick();
       return;
     }
 
@@ -99,6 +108,8 @@ export class IsmoComponent implements OnInit {
     } else {
       this.orderStatusMessage = apiIoResult.parameters.drink + " was not found in our recipe database.";
     }
+
+    this.appRef.tick();
   }
 
   private getOrder(drinkName: string) : Order {

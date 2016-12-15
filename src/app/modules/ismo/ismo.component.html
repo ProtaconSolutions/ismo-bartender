@@ -1,8 +1,21 @@
-<input id="query" type="text" [(ngModel)]="query">
-<button (click)="postQuery()">ammu se taivaalle</button>
-<button *ngIf="!isRecording" (click)="startRecognition()">start</button>
-<button *ngIf="isRecording" (click)="stopRecognition()">stop</button>
-
-<button (click)="sendOrder()">Lähetä tilaus: {{query}}</button>
-<br>
-{{orderStatusMessage}}
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-xs-8 col-xs-offset-2">
+      <div class="row bottom-margin">
+        <div class="col-xs-8 col-xs-offset-2" *ngIf="!isThinking" id="ismo-face"></div>
+        <div class="col-xs-8 col-xs-offset-2" *ngIf="isThinking" id="ismo-face-squinting"></div>
+      </div>
+      <div class="row bottom-margin">
+        <div class="col-xs-8 col-xs-offset-2 text-center">
+          <button class="btn btn-danger btn-lg huge-font" *ngIf="!isRecording" (click)="startRecognition()">Aloita tilaus</button>
+          <button class="btn btn-danger btn-lg huge-font" *ngIf="isRecording" (click)="stopRecognition()">Lähetä tilaus</button>
+        </div>
+      </div>
+      <div class="row bottom-margin">
+        <div class="col-xs-8 col-xs-offset-2 text-center huge-font" id="ismo-mouth">
+          <p class="break-words">{{orderStatusMessage}}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

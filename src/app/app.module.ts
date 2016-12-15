@@ -6,6 +6,7 @@ import { SharedModule } from './shared/shared.module';
 
 import { AppComponent } from './app.component';
 import { IsmoComponent } from './modules/ismo/ismo.component';
+import {ComponentsHelper} from 'ng2-bootstrap/ng2-bootstrap'
 
 @NgModule({
   declarations: [
@@ -18,7 +19,7 @@ import { IsmoComponent } from './modules/ismo/ismo.component';
     FormsModule,
     HttpModule
   ],
-  providers: [],
+  providers: [{provide: ComponentsHelper, useClass: ComponentsHelper}],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
