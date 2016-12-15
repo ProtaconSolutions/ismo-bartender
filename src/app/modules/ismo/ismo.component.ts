@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Response, Http, Headers } from '@angular/http';
 import { IWindow } from './IWindow';
 import { OrderService } from "../../shared/services/order.service";
-import {Order} from "../../shared/services/models/order";
+import { Order } from "../../shared/services/models/order";
+import { Config } from "../../config/config";
 
 const {webkitSpeechRecognition} : IWindow = <IWindow>window;
 
@@ -27,7 +28,7 @@ export class IsmoComponent implements OnInit {
   private postQuery(): void {
     let header = new Headers();
     header.append("Content-Type", "application/json; charset=utf-8");
-    header.append("Authorization", "Bearer " + "05b42a070d394c819fd756c48119f19a");
+    header.append("Authorization", "Bearer " + Config.APIAI_CONFIG.clientAccessToken);
 
     let body = JSON.stringify({ query: this.query, lang: "en", sessionId: "somerandomthing"});
 
@@ -50,14 +51,13 @@ export class IsmoComponent implements OnInit {
     };
 
     this.recognition.onresult = (event) => {
-      console.log(event);
       var text = "";
       for (var i = event.resultIndex; i < event.results.length; ++i) {
         text += event.results[i][0].transcript;
       }
       console.log("setting text: " + text);
       this.query = text;
-    }
+    };
 
     this.recognition.lang = "en-US";
     this.recognition.start();
