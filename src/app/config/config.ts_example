@@ -1,0 +1,11 @@
+export const FIREBASE_CONFIG = {
+  apiKey: "<your_api_key>",
+  authDomain: "<your_auth_domain>",
+  databaseURL: "<your_database_url>",
+  storageBucket: "<your_storage_bucket>",
+  messagingSenderId: "<your_messaging_sender_id>"
+};
+
+export class Config {
+  public static FIREBASE_CONFIG = FIREBASE_CONFIG;
+}

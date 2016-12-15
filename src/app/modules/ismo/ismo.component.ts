@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Response, Http, Headers } from '@angular/http';
 import { IWindow } from './IWindow';
+import { OrderService } from "../../shared/services/order.service";
+import {Order} from "../../shared/services/models/order";
 
 const {webkitSpeechRecognition} : IWindow = <IWindow>window;
 
@@ -16,7 +18,7 @@ export class IsmoComponent implements OnInit {
 
   private recognition: any;
 
-  constructor(private http: Http) { }
+  constructor(private http: Http, private orderService: OrderService) { }
 
   ngOnInit() {
     this.recognition = new webkitSpeechRecognition();
@@ -66,5 +68,12 @@ export class IsmoComponent implements OnInit {
     console.log("ending");
     this.recognition.stop();
     this.isRecording = false;
+  }
+
+  public sendTestOrder(): void {
+    var testOrder = new Order();
+    testOrder.state = 123;
+    testOrder.recipe = [ 0, 0, 1, 0, 0, 3 ];
+    this.orderService.sendOrder(testOrder);
   }
 }
