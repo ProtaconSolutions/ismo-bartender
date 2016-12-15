@@ -1,3 +1,4 @@
-<p>
-  ismo works!
-</p>
+<input id="query" type="text" [(ngModel)]="query">
+<button *ngIf="!isRecording" (click)="startRecognition()">start</button>
+<button *ngIf="isRecording" (click)="stopRecognition()">stop</button>
+<button (click)="postQuery()">ammu se taivaalle</button>
