@@ -28,6 +28,8 @@ export class IsmoComponent implements OnInit {
     new Drink("wine", new Order(1, [6,5,4,3,2,1]))
   ];
 
+  private baseQuery = "order drink ";
+
   constructor(private http: Http, private orderService: OrderService, private appRef: ApplicationRef) { }
 
   ngOnInit() {
@@ -39,7 +41,7 @@ export class IsmoComponent implements OnInit {
     header.append("Content-Type", "application/json; charset=utf-8");
     header.append("Authorization", "Bearer " + Config.APIAI_CONFIG.clientAccessToken);
 
-    let body = JSON.stringify({ query: this.query, lang: "en", sessionId: "somerandomthing"});
+    let body = JSON.stringify({ query: this.baseQuery + this.query, lang: "en", sessionId: "somerandomthing"});
 
     let response = this.http.post("https://api.api.ai/v1/query?v=20150910", body, {
       headers: header
