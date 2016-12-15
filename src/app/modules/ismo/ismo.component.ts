@@ -25,8 +25,11 @@ export class IsmoComponent implements OnInit {
 
   private recognition: any;
   private drinks: Drink[] = [
-    new Drink("beer", new Order(1, [1,2,3,4,5,6])),
-    new Drink("wine", new Order(1, [6,5,4,3,2,1]))
+    new Drink("beer", new Order(0, [10, 0, 0, 0])),
+    new Drink("wine", new Order(0, [0, 10, 0, 0])),
+    new Drink("jaffa", new Order(0, [0, 0, 10, 0])),
+    new Drink("coke", new Order(0, [0, 0, 0, 10])),
+    new Drink("jaffacoke", new Order(0, [0, 0, 10, 10]))
   ];
 
   constructor(private http: Http, private orderService: OrderService, private appRef: ApplicationRef) { }
