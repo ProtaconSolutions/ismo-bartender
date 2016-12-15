@@ -36,8 +36,6 @@ export class IsmoComponent implements OnInit {
   }
 
   private postQuery(): void {
-    this.isThinking = true;
-
     let header = new Headers();
     header.append("Content-Type", "application/json; charset=utf-8");
     header.append("Authorization", "Bearer " + Config.APIAI_CONFIG.clientAccessToken);
@@ -50,12 +48,14 @@ export class IsmoComponent implements OnInit {
 
     response.subscribe(
       data => {
-        this.isThinking = false;
         this.handleOrderResult(data.json().result);
+        this.isThinking = false;
+        this.appRef.tick();
       },
       err => {
-        this.isThinking = false;
         console.log(err.text())
+        this.isThinking = false;
+        this.appRef.tick();
       },
       () => console.log("ready")
     );
@@ -64,6 +64,7 @@ export class IsmoComponent implements OnInit {
   private startRecognition(): void {
     this.recognition.continuous = false;
     this.recognition.interimResults = false;
+    this.isThinking = true;
 
     this.recognition.onstart = function(event) {
       console.log("recording");
@@ -105,6 +106,10 @@ export class IsmoComponent implements OnInit {
 
     if (order !== null) {
       this.orderService.sendOrder(order);
+      setTimeout(() => {
+        this.orderStatusMessage = "";
+        this.appRef.tick();
+      }, 3000);
     } else {
       this.orderStatusMessage = apiIoResult.parameters.drink + " was not found in our recipe database.";
     }
