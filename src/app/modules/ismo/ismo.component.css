@@ -30,3 +30,19 @@
 .break-words {
     word-wrap: break-word;
 }
+
+@media(max-width: 740px) {
+    #ismo-face {
+        min-height: 250px;
+        padding: 10px;
+    }
+
+    #ismo-face-squinting {
+        min-height: 250px;
+        padding: 10px;
+    }
+
+    .huge-font {
+        font-size: 20px;
+    }
+}
